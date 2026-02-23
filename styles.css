@@ -1,0 +1,593 @@
+:root {
+    --soft-pink: #ffdae0;
+    --soft-blue: #e0f2ff;
+    --main-pink: #ff85a1;
+    --text-color: #7a5c5c;
+}
+
+* {
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box;
+    -webkit-user-select: none; /* ห้ามคลุมดำ */
+    user-select: none;
+    -webkit-user-drag: none;   /* ห้ามลากรูป (แก้ปัญหาวงกลมขีดฆ่า) */
+}
+
+/* อนุญาตให้เลือกข้อความได้เฉพาะในส่วนที่จำเป็น (ถ้าต้องการ) */
+.wish, .main-con, .sub-con {
+    user-select: text; 
+}
+
+body {
+    background: linear-gradient(180deg, var(--soft-pink) 0%, var(--soft-blue) 100%);
+    font-family: 'Kanit', sans-serif;
+    color: var(--text-color);
+}
+
+.header-title {
+    text-align: center;
+    padding: 40px;
+    font-size: 4.5rem;
+    font-style: italic;
+    color: var(--main-pink);
+    text-shadow: 2px 2px white;
+}
+
+/* Flip Card Styles */
+.hero-section {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+.flip-card {
+    background-color: transparent;
+    width: 900px;
+    height: 600px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+/* เมื่อคลิกจะเพิ่ม Class 'flipped' ผ่าน JS */
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.flip-card-front {
+    background-color: white;
+    border: 8px dashed var(--soft-pink);
+}
+
+.flip-card-back {
+    background-color: white;
+    border: 8px solid var(--soft-blue);
+    transform: rotateY(180deg);
+}
+
+.sub-con {
+    font-size: 2rem; /* ปรับตัวเลขเพื่อเปลี่ยนขนาด */
+    color: #7a5c5c;    /* เปลี่ยนโค้ดสีตามใจชอบ */
+}
+
+.main-con {
+    font-family: 'Dancing Script', cursive;
+    font-size: 5rem;
+    color: var(--main-pink);
+}
+
+.divider {
+    width: 100px; height: 3px; background: var(--soft-blue); margin: 15px auto;
+}
+
+.wish {
+    font-size: 1.5rem;
+    font-weight: normal; 
+    font-style: italic; /* ทำเป็นตัวเอียง */
+}
+
+.small-text {
+    font-size: 1.7rem;
+    font-weight: normal; 
+}
+
+.hint {
+    font-size: 1.5rem;
+    font-weight: normal; 
+    color: #324ce3;
+}
+
+.heart {
+    font-size: 15rem;
+    animation: pulse 1.5s infinite;
+}
+
+.heart-text {
+    font-size: 4rem;
+    font-family: 'Dancing Script', cursive;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Gallery Style (Folder Look) */
+.gallery-container {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+/* ปรับปรุง Animation การเลื่อนขึ้น (Scroll Reveal) */
+.year-section {
+    margin-bottom: 60px;
+    opacity: 0;
+    transform: translateY(50px); /* เพิ่มระยะการเลื่อนขึ้นให้เห็นชัด */
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ใช้ curve ที่นุ่มนวลขึ้น */
+}
+
+.year-section.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.folder-tab {
+    background: white;
+    width: fit-content;
+    padding: 5px 20px;
+    border-radius: 10px 10px 0 0;
+    font-size: 1.2rem;
+    color: #aaa;
+}
+
+.folder-body {
+    background: white;
+    border-radius: 0 20px 20px 20px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+}
+
+.year-label {
+    font-size: 2rem;
+}
+
+/* จัดระเบียบหัวข้อโฟลเดอร์ให้มีปุ่มอยู่ขวา */
+.folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed var(--soft-pink);
+}
+
+/*ปุ่มเพิ่มรูปภาพ*/
+.add-photo-btn {
+    width: 60px;
+    height: 60px;
+    background-color: var(--main-pink);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 133, 161, 0.4);
+    transition: background-color 0.3s ease;/* ทำให้ตอนเปลี่ยนสีดูนุ่มนวล */
+
+    /* ป้องกันการเลือกตัวอักษร + */
+    user-select: none;
+    line-height: 0; /* ช่วยให้ + อยู่ตรงกลางเป๊ะในบาง Browser */
+}
+
+.add-photo-btn:hover {
+    background-color: var(--text-color); /* เปลี่ยนสีพื้นหลังเป็นสีน้ำตาลเข้มตามธีม */
+    transform: scale(1.1); /* ขยายใหญ่ขึ้นนิดหน่อยให้รู้ว่ากดได้ */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.add-photo-btn span {
+    transition: transform 0.3s ease;
+}
+
+/* แถม: เมื่อชี้แล้วให้เครื่องหมาย + ขยับนิดนึง */
+.add-photo-btn:hover span {
+    transform: scale(1.2); 
+}
+
+.horizontal-scroll {
+    margin-top: 10px;
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.photo-item {
+    flex: 0 0 300px;
+    height: 250px;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #f0f0f0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /*อนิเมชั่นนุ่มขึ้น */
+    cursor: pointer; /* เปลี่ยนเป็นรูปมือปกติเพื่อให้ไม่ดูงง */
+    position: relative;
+    z-index: 1;
+    user-select: none; /* ป้องกันการคลุมดำรูปภาพขณะเลื่อน */
+    /* ย้ำการปิดการลากและคลุมดำ */
+    -webkit-user-drag: none;
+    /* ป้องกันการกระตุกขณะเลื่อน */
+    will-change: transform;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2); /* พื้นหลังใสแบบกระจก */
+    backdrop-filter: blur(8px); /* ทำความเบลอหลังปุ่ม */
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px; /* ทรงสี่เหลี่ยมโค้งมนดูทันสมัยกว่าวงกลม */
+    color: #ff4d4d; /* สีแดงสด */
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0; /* ซ่อนไว้ปกติ */
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* เมื่อเอาเมาส์วางบนรูปภาพ ให้ปุ่มเด้งออกมา */
+.photo-item:hover .delete-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์วางบนปุ่มลบ */
+.delete-btn:hover {
+    background: #ff4d4d;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.4);
+}
+
+/* เพิ่มความสวยงามให้ตัวเลข/ไอคอนในปุ่ม */
+.delete-btn::before {
+    content: "✕"; /* ใช้ตัวคูณแบบหนา */
+}
+
+.photo-item:hover {
+    transform: translateY(-10px) scale(1.02); /* ขยับขึ้นและขยายเล็กน้อย */
+    z-index: 10;
+}
+
+.photo-item img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    pointer-events: auto; /* ให้รับการคลิกเพื่อทำ Lightbox ได้ */
+    -webkit-user-drag: none; /* ป้องกันวงกลมขีดฆ่าเวลาเผลอลากรูป */
+}
+
+/* 2. ระบบรูปภาพเต็มหน้าจอ (Lightbox) */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 10px;
+    animation: zoomIn 0.3s ease;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px; right: 35px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
+.horizontal-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px 0;
+    scroll-behavior: auto; /* เปลี่ยนเป็น auto เพื่อให้เลื่อนตามเมาส์ได้ทันที */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* ซ่อน scrollbar */
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-scroll:active {
+    cursor: pointer;
+}
+
+/* ======================== Wishes Section ======================== */
+.wishes-section {
+  margin-top: 80px;
+}
+
+.wishes-body {
+  padding: 30px;
+}
+
+.wish-form {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border: 3px dashed var(--soft-pink);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 25px rgba(255, 133, 161, 0.15);
+}
+
+.wish-input {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  border: 2px solid var(--soft-blue);
+  border-radius: 12px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  background: white;
+}
+
+.wish-input:focus {
+  outline: none;
+  border-color: var(--main-pink);
+  box-shadow: 0 0 0 4px rgba(255, 133, 161, 0.2);
+}
+
+.name-input {
+  font-weight: 500;
+}
+
+.message-input {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.submit-wish-btn {
+  background: var(--main-pink);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1.3rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  box-shadow: 0 6px 20px rgba(255, 133, 161, 0.4);
+  transition: all 0.3s ease;
+}
+
+.submit-wish-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 133, 161, 0.5);
+  background: #ff6b8d;
+}
+
+.submit-wish-btn:active {
+  transform: translateY(1px);
+}
+
+/* การ์ดคำอวยพร */
+.wish-card {
+  background: white;
+  border: 5px dashed var(--soft-blue);
+  border-radius: 20px;
+  padding: 24px 28px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease;
+}
+
+.wish-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 1;
+  /* transition: opacity 0.25s ease; */
+}
+
+.wish-card:hover .wish-actions {
+  opacity: 1;
+}
+
+.wish-card:hover {
+  transform: translateY(-8px);
+}
+
+.wish-card::before {
+  content: "💌";
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  font-size: 5rem;
+  opacity: 0.12;
+  color: var(--main-pink);
+  transform: rotate(15deg);
+}
+
+.wish-message {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: #5c4a4a;
+  white-space: pre-wrap;
+  user-select: text; /* อนุญาต copy ข้อความ */
+}
+
+.wish-from {
+  text-align: right;
+  font-style: italic;
+  color: var(--main-pink);
+  font-size: 1.15rem;
+  font-weight: 500;
+  user-select: text;
+}
+
+.wishes-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wishes-gallery {
+    grid-template-columns: 1fr;
+  }
+  .flip-card {
+    width: 90%;
+    height: 500px;
+  }
+}
+
+.action-btn {
+  width: auto; /* ปรับให้กว้างตาม text */
+  padding: 4px 12px;
+  height: 28px;
+  border-radius: 20px; /* ทรงแคปซูลแทนวงกลม */
+  border: none;
+  font-size: 0.95rem;
+  font-family: 'Kanit', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.action-btn.edit-btn {
+  color: #4a90e2;
+}
+
+.action-btn.delete-btn {
+  color: #ff4d4d;
+}
+
+.action-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.action-btn.edit-btn:hover {
+  background: #e6f0ff;
+}
+
+.action-btn.delete-btn:hover {
+  background: #ffe6e6;
+}
+
+/* โหมดแก้ไข */
+.wish-card.editing .wish-message {
+  display: none;
+}
+
+.wish-card.editing .wish-edit-form {
+  display: block;
+}
+
+.wish-edit-form {
+  display: none;
+  margin-top: 8px;
+}
+
+.wish-edit-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 2px solid var(--soft-blue);
+  border-radius: 12px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.1rem;
+  resize: vertical;
+  margin-bottom: 10px;
+  user-select: text; /* อนุญาตพิมพ์และ copy */
+}
+
+.wish-edit-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.wish-edit-actions button {
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.wish-save-btn {
+  background: var(--main-pink);
+  color: white;
+}
+
+.wish-cancel-btn {
+  background: #e0e0e0;
+  color: #555;
+}
