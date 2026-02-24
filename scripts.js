@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const WISH_API =
-    "https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec";
+    "https://script.google.com/macros/s/AKfycbx09KZefUxv5vaIN7r8z6EjTylYIplHCdOCExgod0ROPUFi9czus4SHZ5NvUQr8ymIb/exec";
 
   // ป้องกันการเกิด Ghost Image เวลาลากรูป
   window.addEventListener("dragstart", (e) => e.preventDefault());
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          "https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec",
+          "https://script.google.com/macros/s/AKfycbx09KZefUxv5vaIN7r8z6EjTylYIplHCdOCExgod0ROPUFi9czus4SHZ5NvUQr8ymIb/exec",
           {
             method: "POST",
             body: JSON.stringify(payload),
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // เรียก API ลบ (เหมือนเดิม)
         await fetch(
-          `https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec?delId=${id}`,
+          `https://script.google.com/macros/s/AKfycbx09KZefUxv5vaIN7r8z6EjTylYIplHCdOCExgod0ROPUFi9czus4SHZ5NvUQr8ymIb/exec?delId=${id}`,
         );
 
         // ปิด lightbox หลังลบ
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadExistingPhotos() {
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec",
+        "https://script.google.com/macros/s/AKfycbx09KZefUxv5vaIN7r8z6EjTylYIplHCdOCExgod0ROPUFi9czus4SHZ5NvUQr8ymIb/exec",
       );
       const photos = await response.json();
       const targetContainer = document.querySelector(".horizontal-scroll");
