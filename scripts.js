@@ -125,35 +125,52 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- ส่วนที่ 2: ฟังก์ชันสร้าง HTML ของรูปภาพ (ใช้ร่วมกันทั้งตอนโหลดและตอนอัปโหลด) ---
-  function createPhotoElement(url, id, container) {
+  // แก้ไขฟังก์ชัน createPhotoElement
+function createPhotoElement(url, id, container) {
     const photoItem = document.createElement("div");
     photoItem.className = "photo-item";
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn"; // ใช้สไตล์ Glassmorphism ที่เราคุยกัน
-    deleteBtn.onclick = async (e) => {
-      e.stopPropagation();
-      if (confirm("ต้องการลบรูปนี้ใช่ไหม?")) {
-        photoItem.remove(); // ลบจากหน้าจอทันที
-        await fetch(
-          `https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec?delId=${id}`,
-        );
-      }
-    };
+    // ไม่สร้าง delete button ที่นี่อีกต่อไป
+    photoItem.innerHTML = `<img src="${url}" alt="Memory Photo" data-id="${id}">`;
 
-    photoItem.innerHTML = `<img src="${url}" alt="Memory Photo">`;
-    photoItem.appendChild(deleteBtn);
+    // ระบบ Lightbox (ปรับให้ส่ง id ไปด้วย)
+    const img = photoItem.querySelector("img");
+    img.addEventListener("click", () => {
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+        
+        lightbox.style.display = "flex";
+        lightboxImg.src = url;
+        
+        // เพิ่ม data-id เพื่อให้รู้ว่ารูปนี้คืออันไหน
+        lightboxImg.dataset.id = id;
 
-    // ระบบ Lightbox
-    photoItem.querySelector("img").addEventListener("click", () => {
-      const lightbox = document.getElementById("lightbox");
-      const lightboxImg = document.getElementById("lightbox-img");
-      lightbox.style.display = "flex";
-      lightboxImg.src = url;
+        // แสดงปุ่มลบใน lightbox (จะจัดการในขั้นตอนถัดไป)
+        document.querySelector(".lightbox-delete-btn")?.remove(); // ล้างปุ่มเก่าก่อน
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "lightbox-delete-btn";
+        deleteBtn.textContent = "✕ ลบ";
+        deleteBtn.onclick = async (e) => {
+            e.stopPropagation();
+            if (!confirm("ต้องการลบรูปนี้ใช่ไหม?")) return;
+
+            // ลบจาก DOM ทันที
+            photoItem.remove();
+
+            // เรียก API ลบ (เหมือนเดิม)
+            await fetch(
+                `https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec?delId=${id}`
+            );
+
+            // ปิด lightbox หลังลบ
+            lightbox.style.display = "none";
+        };
+
+        lightbox.appendChild(deleteBtn);
     });
 
     container.prepend(photoItem);
-  }
+}
 
   // --- ส่วนที่ 3: ดึงรูปภาพที่มีอยู่แล้วมาโชว์ตอนเปิดเว็บ ---
   async function loadExistingPhotos() {
@@ -216,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       card.innerHTML = `
       <div class="wish-actions">
-        <button class="action-btn edit-btn" onclick="startEdit('${wish.id}')">ลบ</button>
+        <button class="action-btn edit-btn" onclick="startEdit('${wish.id}')">แก้ไข</button>
         <button class="action-btn delete-btn" onclick="deleteWish('${wish.id}')">ลบ</button>
       </div>
 
