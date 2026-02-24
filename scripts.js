@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const WISH_API =
+    "https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec";
+
   // ป้องกันการเกิด Ghost Image เวลาลากรูป
   window.addEventListener("dragstart", (e) => e.preventDefault());
 
@@ -126,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- ส่วนที่ 2: ฟังก์ชันสร้าง HTML ของรูปภาพ (ใช้ร่วมกันทั้งตอนโหลดและตอนอัปโหลด) ---
   // แก้ไขฟังก์ชัน createPhotoElement
-function createPhotoElement(url, id, container) {
+  function createPhotoElement(url, id, container) {
     const photoItem = document.createElement("div");
     photoItem.className = "photo-item";
 
@@ -136,41 +139,41 @@ function createPhotoElement(url, id, container) {
     // ระบบ Lightbox (ปรับให้ส่ง id ไปด้วย)
     const img = photoItem.querySelector("img");
     img.addEventListener("click", () => {
-        const lightbox = document.getElementById("lightbox");
-        const lightboxImg = document.getElementById("lightbox-img");
-        
-        lightbox.style.display = "flex";
-        lightboxImg.src = url;
-        
-        // เพิ่ม data-id เพื่อให้รู้ว่ารูปนี้คืออันไหน
-        lightboxImg.dataset.id = id;
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
 
-        // แสดงปุ่มลบใน lightbox (จะจัดการในขั้นตอนถัดไป)
-        document.querySelector(".lightbox-delete-btn")?.remove(); // ล้างปุ่มเก่าก่อน
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "lightbox-delete-btn";
-        deleteBtn.textContent = "✕ ลบ";
-        deleteBtn.onclick = async (e) => {
-            e.stopPropagation();
-            if (!confirm("ต้องการลบรูปนี้ใช่ไหม?")) return;
+      lightbox.style.display = "flex";
+      lightboxImg.src = url;
 
-            // ลบจาก DOM ทันที
-            photoItem.remove();
+      // เพิ่ม data-id เพื่อให้รู้ว่ารูปนี้คืออันไหน
+      lightboxImg.dataset.id = id;
 
-            // เรียก API ลบ (เหมือนเดิม)
-            await fetch(
-                `https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec?delId=${id}`
-            );
+      // แสดงปุ่มลบใน lightbox (จะจัดการในขั้นตอนถัดไป)
+      document.querySelector(".lightbox-delete-btn")?.remove(); // ล้างปุ่มเก่าก่อน
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "lightbox-delete-btn";
+      deleteBtn.textContent = "✕ ลบ";
+      deleteBtn.onclick = async (e) => {
+        e.stopPropagation();
+        if (!confirm("ต้องการลบรูปนี้ใช่ไหม?")) return;
 
-            // ปิด lightbox หลังลบ
-            lightbox.style.display = "none";
-        };
+        // ลบจาก DOM ทันที
+        photoItem.remove();
 
-        lightbox.appendChild(deleteBtn);
+        // เรียก API ลบ (เหมือนเดิม)
+        await fetch(
+          `https://script.google.com/macros/s/AKfycbz93a-mZwHSW95Ttf3pQ4gdv8Rml67795qk8wd-PTBZvzTGGJekRy7T30rX4LGcPHcN/exec?delId=${id}`,
+        );
+
+        // ปิด lightbox หลังลบ
+        lightbox.style.display = "none";
+      };
+
+      lightbox.appendChild(deleteBtn);
     });
 
     container.prepend(photoItem);
-}
+  }
 
   // --- ส่วนที่ 3: ดึงรูปภาพที่มีอยู่แล้วมาโชว์ตอนเปิดเว็บ ---
   async function loadExistingPhotos() {
@@ -207,34 +210,77 @@ function createPhotoElement(url, id, container) {
   });
 
   // --- ระบบคำอวยพร (Wish Wall) พร้อมแก้ไข + ลบ + localStorage ---
+  // ===============================
+  // 🌸 WISH WALL (Google Sheets)
+  // ===============================
+
   const nameInput = document.getElementById("wish-name");
   const messageInput = document.getElementById("wish-message");
   const submitBtn = document.getElementById("submit-wish");
   const wishesContainer = document.getElementById("wishes-container");
 
-  let wishes = JSON.parse(localStorage.getItem("tub6_wishes")) || [];
-  let editingId = null;
+  let wishes = [];
 
   function generateId() {
     return Date.now() + Math.random().toString(36).substr(2, 5);
   }
 
-  function saveWishes() {
-    localStorage.setItem("tub6_wishes", JSON.stringify(wishes));
+  async function loadWishes() {
+    const res = await fetch(WISH_API + "?type=wish");
+    const data = await res.json();
+    wishes = data.reverse();
+    renderWishes();
+  }
+
+  async function addWish(wish) {
+    await fetch(WISH_API, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "wish",
+        action: "add",
+        ...wish,
+      }),
+    });
+    loadWishes();
+  }
+
+  async function deleteWishAPI(id) {
+    await fetch(WISH_API, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "wish",
+        action: "delete",
+        id,
+      }),
+    });
+    loadWishes();
+  }
+
+  async function editWishAPI(id, message) {
+    await fetch(WISH_API, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "wish",
+        action: "edit",
+        id,
+        message,
+      }),
+    });
+    loadWishes();
   }
 
   function renderWishes() {
-    wishesContainer.innerHTML = ""; // ล้างก่อน render ใหม่ทุกครั้ง
+    wishesContainer.innerHTML = "";
 
     wishes.forEach((wish) => {
       const card = document.createElement("div");
-      card.className = "wish-card scroll-reveal";
+      card.className = "wish-card";
       card.dataset.id = wish.id;
 
       card.innerHTML = `
       <div class="wish-actions">
-        <button class="action-btn edit-btn" onclick="startEdit('${wish.id}')">แก้ไข</button>
-        <button class="action-btn delete-btn" onclick="deleteWish('${wish.id}')">ลบ</button>
+        <button onclick="startEdit('${wish.id}')">แก้ไข</button>
+        <button onclick="deleteWish('${wish.id}')">ลบ</button>
       </div>
 
       <p class="wish-message">${wish.message.replace(/\n/g, "<br>")}</p>
@@ -242,75 +288,44 @@ function createPhotoElement(url, id, container) {
 
       <div class="wish-edit-form">
         <textarea class="wish-edit-textarea">${wish.message}</textarea>
-        <div class="wish-edit-actions">
-          <button class="wish-cancel-btn" onclick="cancelEdit('${wish.id}')">ยกเลิก</button>
-          <button class="wish-save-btn" onclick="saveEdit('${wish.id}')">บันทึก</button>
-        </div>
+        <button onclick="saveEdit('${wish.id}')">บันทึก</button>
+        <button onclick="cancelEdit('${wish.id}')">ยกเลิก</button>
       </div>
     `;
 
       wishesContainer.prepend(card);
-
-      // ให้ animation เล่นหลัง render
-      setTimeout(() => {
-        card.classList.add("show");
-      }, 50);
     });
   }
 
+  window.deleteWish = function (id) {
+    if (!confirm("แน่ใจนะว่าจะลบ?")) return;
+    deleteWishAPI(id);
+  };
+
   window.startEdit = function (id) {
     const card = document.querySelector(`.wish-card[data-id="${id}"]`);
-    if (!card) return;
-
     card.classList.add("editing");
-    const textarea = card.querySelector(".wish-edit-textarea");
-    if (textarea) {
-      textarea.focus();
-      textarea.setSelectionRange(textarea.value.length, textarea.value.length); // cursor ไปท้าย
-    }
   };
 
   window.cancelEdit = function (id) {
     const card = document.querySelector(`.wish-card[data-id="${id}"]`);
-    if (card) card.classList.remove("editing");
+    card.classList.remove("editing");
   };
 
   window.saveEdit = function (id) {
     const card = document.querySelector(`.wish-card[data-id="${id}"]`);
-    if (!card) return;
-
-    const textarea = card.querySelector(".wish-edit-textarea");
-    const newMessage = textarea.value.trim();
-
-    if (!newMessage) {
-      alert("ข้อความห้ามว่างนะครับ ♡");
-      return;
-    }
-
-    const wishIndex = wishes.findIndex((w) => w.id === id);
-    if (wishIndex !== -1) {
-      wishes[wishIndex].message = newMessage;
-      saveWishes();
-      renderWishes();
-    }
+    const newMessage = card.querySelector(".wish-edit-textarea").value.trim();
+    if (!newMessage) return alert("ข้อความห้ามว่าง");
+    editWishAPI(id, newMessage);
   };
 
-  window.deleteWish = function (id) {
-    if (!confirm("แน่ใจนะว่าจะลบคำอวยพรนี้?")) return;
-
-    wishes = wishes.filter((w) => w.id !== id);
-    saveWishes();
-    renderWishes();
-  };
-
-  // ส่งคำอวยพรใหม่
   if (submitBtn) {
     submitBtn.addEventListener("click", () => {
       const name = nameInput.value.trim();
       const msg = messageInput.value.trim();
 
       if (!name || !msg) {
-        alert("กรุณากรอกชื่อและข้อความด้วยน้า ♡");
+        alert("กรุณากรอกชื่อและข้อความ");
         return;
       }
 
@@ -318,25 +333,14 @@ function createPhotoElement(url, id, container) {
         id: generateId(),
         name,
         message: msg,
-        createdAt: Date.now(),
       };
 
-      wishes.unshift(newWish);
-      saveWishes();
-      renderWishes();
+      addWish(newWish);
 
       nameInput.value = "";
       messageInput.value = "";
     });
-
-    messageInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        submitBtn.click();
-      }
-    });
   }
 
-  // โหลดครั้งแรก + render
-  renderWishes();
+  loadWishes();
 });
