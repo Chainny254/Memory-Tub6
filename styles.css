@@ -28,7 +28,7 @@ body {
 .header-title {
     text-align: center;
     padding: 40px;
-    font-size: 4.5rem;
+    font-size: clamp(2rem, 6vw, 4.5rem);
     font-style: italic;
     color: var(--main-pink);
     text-shadow: 2px 2px white;
@@ -43,8 +43,9 @@ body {
 
 .flip-card {
     background-color: transparent;
-    width: 900px;
-    height: 600px;
+    width: min(90%, 900px);
+    aspect-ratio: 3 / 2; /* แทนการ fix height */
+    height: auto;
     perspective: 1000px;
     cursor: pointer;
 }
@@ -89,13 +90,13 @@ body {
 }
 
 .sub-con {
-    font-size: 2rem; /* ปรับตัวเลขเพื่อเปลี่ยนขนาด */
+    font-size: clamp(1.2rem, 4vw, 2rem);
     color: #7a5c5c;    /* เปลี่ยนโค้ดสีตามใจชอบ */
 }
 
 .main-con {
     font-family: 'Dancing Script', cursive;
-    font-size: 5rem;
+    font-size: clamp(2rem, 8vw, 5rem);
     color: var(--main-pink);
 }
 
@@ -104,13 +105,13 @@ body {
 }
 
 .wish {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 3.5vw, 1.5rem);
     font-weight: normal; 
     font-style: italic; /* ทำเป็นตัวเอียง */
 }
 
 .small-text {
-    font-size: 1.7rem;
+    font-size: clamp(1rem, 3vw, 1.7rem);
     font-weight: normal; 
 }
 
@@ -121,7 +122,7 @@ body {
 }
 
 .heart {
-    font-size: 15rem;
+    font-size: clamp(5rem, 20vw, 15rem);
     animation: pulse 1.5s infinite;
 }
 
@@ -231,8 +232,8 @@ body {
 }
 
 .photo-item {
-    flex: 0 0 300px;
-    height: 250px;
+    flex: 0 0 clamp(200px, 70vw, 300px);
+    height: clamp(180px, 50vw, 250px);
     border-radius: 15px;
     overflow: hidden;
     background: #f0f0f0;
@@ -247,36 +248,7 @@ body {
     will-change: transform;
 }
 
-.delete-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.2); /* พื้นหลังใสแบบกระจก */
-    backdrop-filter: blur(8px); /* ทำความเบลอหลังปุ่ม */
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px; /* ทรงสี่เหลี่ยมโค้งมนดูทันสมัยกว่าวงกลม */
-    color: #ff4d4d; /* สีแดงสด */
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 15;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    opacity: 0; /* ซ่อนไว้ปกติ */
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
 
-/* เมื่อเอาเมาส์วางบนรูปภาพ ให้ปุ่มเด้งออกมา */
-.photo-item:hover .delete-btn {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 /* เอฟเฟกต์ตอนเอาเมาส์วางบนปุ่มลบ */
 .delete-btn:hover {
@@ -334,6 +306,33 @@ body {
 @keyframes zoomIn {
     from { transform: scale(0.5); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+}
+
+/* ปุ่มลบในโหมดดูเต็มจอ (lightbox) */
+.lightbox-delete-btn {
+    position: absolute;
+    top: 30px;
+    right: 80px;
+    padding: 10px 20px;
+    background: rgba(255, 70, 70, 0.9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    z-index: 3000;
+    transition: all 0.25s ease;
+}
+
+.lightbox-delete-btn:hover {
+    background: #ff2d2d;
+    transform: scale(1.08);
+}
+
+.lightbox-delete-btn:active {
+    transform: scale(0.97);
 }
 
 /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
@@ -590,4 +589,72 @@ body {
 .wish-cancel-btn {
   background: #e0e0e0;
   color: #555;
+}
+
+/* ===================== MOBILE FULLSCREEN HERO ===================== */
+@media (max-width: 768px) {
+
+  .hero-section {
+    min-height: 100svh; /* ใช้ svh กันปัญหาแถบ browser */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+  }
+
+  .flip-card {
+    width: 100%;
+    aspect-ratio: 3 / 4; /* ทรงการ์ดแนวตั้งสวย ๆ บนมือถือ */
+    max-width: 500px;
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    padding: 25px 20px;
+  }
+
+  .header-title {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    padding: 20px 10px;
+  }
+
+  .main-con {
+    font-size: clamp(2rem, 9vw, 3.5rem);
+  }
+
+  .heart-text {
+    font-size: clamp(1.8rem, 7vw, 3rem);
+  }
+
+  .gallery-container {
+    padding: 20px;
+  }
+
+  .folder-body {
+    padding: 15px;
+  }
+
+  .wish-form {
+    padding: 18px;
+  }
+
+  .submit-wish-btn {
+    width: 100%;
+  }
+
+}
+
+/* ===================== SAFE AREA SUPPORT ===================== */
+
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+header {
+  padding-top: calc(20px + env(safe-area-inset-top));
+}
+
+footer {
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
